@@ -337,7 +337,6 @@ const RouteAnalyzer = (() => {
     }
     return 'complex';
   }
-  }
 
   function isRoundaboutStep(step, instructionHtml) {
     const instruction = instructionHtml || step.instructions || '';
