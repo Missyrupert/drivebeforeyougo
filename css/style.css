@@ -436,6 +436,48 @@ body {
   position: relative;
 }
 
+.orientation-overlay {
+  position: absolute;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  pointer-events: none;
+  opacity: 0.35;
+  z-index: 5;
+}
+
+.orientation-car {
+  width: 26px;
+  height: 40px;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  background: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+.orientation-arrow {
+  width: 2px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.7);
+  position: relative;
+}
+
+.orientation-arrow::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -8px;
+  transform: translateX(-50%) rotate(45deg);
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid rgba(255, 255, 255, 0.7);
+  border-right: 2px solid rgba(255, 255, 255, 0.7);
+}
+
 .junction-info-overlay {
   padding: 0.75rem 1rem;
   background: var(--white);

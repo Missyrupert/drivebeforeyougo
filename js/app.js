@@ -31,6 +31,7 @@
 
   const rehearsalView      = document.getElementById('rehearsal-view');
   const streetviewContainer = document.getElementById('streetview-container');
+  const orientationOverlay = document.getElementById('orientation-overlay');
   const junctionBadge      = document.getElementById('junction-badge');
   const junctionDescription = document.getElementById('junction-description');
   const junctionTypeTag    = document.getElementById('junction-type-tag');
@@ -313,8 +314,13 @@
       junctionTypeTag.textContent = state.point.typeLabel;
       junctionTypeTag.className = 'junction-type-tag type-tag ' + state.point.type;
       decisionLabel.hidden = !state.point.isDecisionPoint;
+      const showOrientation =
+        state.point.commitmentLevel === 'high' &&
+        (state.point.isLeadIn || state.point.isDecisionPoint);
+      orientationOverlay.hidden = !showOrientation;
     } else {
       decisionLabel.hidden = true;
+      orientationOverlay.hidden = true;
     }
 
     progressBar.style.width = state.progress + '%';
