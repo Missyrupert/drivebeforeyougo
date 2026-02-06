@@ -16,8 +16,7 @@ Boring motorway stretches are skipped. You only see the moments that matter.
 1. Clone this repo
 2. Get a Google Maps API key (see below)
 3. Open `index.html` in a browser
-4. Paste your API key when prompted (stored locally, never sent anywhere else)
-5. Enter a journey and hit "Find Tricky Junctions"
+4. Enter a journey and hit "Find Tricky Junctions"
 
 No build tools, no npm, no frameworks. Just open the HTML file.
 
@@ -40,6 +39,7 @@ In **APIs & Services > Library**, enable:
 - Go to **APIs & Services > Credentials**
 - Click **Create Credentials > API Key**
 - Copy the key
+- Set it as `GOOGLE_MAPS_API_KEY` in Netlify (see Deploy section)
 
 ### 4. (Recommended) Restrict the Key
 - **Application restrictions**: HTTP referrers — add your domain or `localhost`
@@ -84,6 +84,8 @@ Since there's no build step, you can deploy anywhere that serves static files:
 ## Deploy to Netlify
 
 - **Publish directory**: set to the repo root (`/`). No build command needed.
+- **Environment variable**: set `GOOGLE_MAPS_API_KEY` in Netlify.
+- The key is injected at the edge and never committed to source control.
 
 ## Install on phone
 

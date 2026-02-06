@@ -42,8 +42,8 @@
   const progressBar        = document.getElementById('progress-bar');
 
   // ---- State ----
-  const API_KEY_STORAGE = 'drivebeforeyougo_api_key';
   const debugMode = new URLSearchParams(window.location.search).get('debug') === '1';
+  const envKey = (window.__ENV__ && window.__ENV__.GOOGLE_MAPS_API_KEY) || '';
   let directionsService = null;
   let decisionPoints = [];
   let originPlace = null;
@@ -56,37 +56,12 @@
 
   function boot() {
     registerServiceWorker();
-    const apiKey = localStorage.getItem(API_KEY_STORAGE);
+    const apiKey = envKey.trim();
     if (apiKey) {
       loadGoogleMaps(apiKey);
-    } else {
-      showApiKeyPrompt();
+    } else if (isDevHost()) {
+      console.error('Google Maps API key is missing. Set GOOGLE_MAPS_API_KEY in Netlify.');
     }
-  }
-
-  // ---- API Key Prompt ----
-  function showApiKeyPrompt() {
-    const prompt = document.createElement('div');
-    prompt.className = 'api-key-prompt';
-    prompt.id = 'api-key-prompt';
-    prompt.innerHTML = `
-      <h2>Google Maps API Key</h2>
-      <p>To use DriveBeforeYouGo you need a Google Maps API key with Directions, Street View, Places, and Maps JS APIs enabled.
-         <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Get one here</a>.</p>
-      <input type="text" id="api-key-input" placeholder="Paste your API key">
-      <button class="btn-primary" id="save-key-btn">Save & Continue</button>
-    `;
-    inputScreen.appendChild(prompt);
-    findBtn.disabled = true;
-
-    document.getElementById('save-key-btn').addEventListener('click', () => {
-      const key = document.getElementById('api-key-input').value.trim();
-      if (!key) return;
-      localStorage.setItem(API_KEY_STORAGE, key);
-      prompt.remove();
-      findBtn.disabled = false;
-      loadGoogleMaps(key);
-    });
   }
 
   // ---- Load Google Maps JS API (async pattern) ----
@@ -409,6 +384,10 @@
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     });
+  }
+
+  function isDevHost() {
+    return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   }
 
   function renderDebugPanel(points, completed) {
