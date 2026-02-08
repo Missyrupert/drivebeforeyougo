@@ -51,6 +51,9 @@
   const annoClearBtn       = document.getElementById('anno-clear-btn');
   const annoSaveBtn        = document.getElementById('anno-save-btn');
   const annoCancelBtn      = document.getElementById('anno-cancel-btn');
+  const annoHelpOverlay    = document.getElementById('anno-help-overlay');
+  const annoHelpDismiss    = document.getElementById('anno-help-dismiss');
+  const toolbarHint        = document.getElementById('toolbar-hint');
 
   // ---- State ----
   const debugMode = new URLSearchParams(window.location.search).get('debug') === '1';
@@ -165,6 +168,13 @@
         toolBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         AnnotationEditor.setTool(btn.dataset.tool);
+        // Update inline hint based on selected tool
+        const hints = {
+          arrow: 'Tap the image to place an arrow. Drag to move, handles to rotate.',
+          text: 'Tap the image to add a text label. Click it to edit the text.',
+          highlight: 'Tap the image to place a highlight circle. Drag to reposition.',
+        };
+        toolbarHint.textContent = hints[btn.dataset.tool] || 'Select a tool, then tap the image to place it';
       });
     });
 
@@ -182,6 +192,10 @@
 
     annoSaveBtn.addEventListener('click', onAnnotationSave);
     annoCancelBtn.addEventListener('click', onAnnotationCancel);
+
+    annoHelpDismiss.addEventListener('click', () => {
+      annoHelpOverlay.hidden = true;
+    });
 
     window.addEventListener('resize', () => {
       AnnotationEditor.resize();
@@ -536,8 +550,15 @@
     annotationToolbar.hidden = false;
     annotateBtn.hidden = true;
 
-    // Clear tool selection
+    // Clear tool selection and reset hint
     toolBtns.forEach(b => b.classList.remove('active'));
+    toolbarHint.textContent = 'Select a tool, then tap the image to place it';
+
+    // Show first-time help overlay
+    if (!localStorage.getItem('dbug-anno-help-seen')) {
+      annoHelpOverlay.hidden = false;
+      localStorage.setItem('dbug-anno-help-seen', '1');
+    }
   }
 
   function onAnnotationSave() {
@@ -545,6 +566,7 @@
     annotationToolbar.hidden = true;
     annotateBtn.hidden = false;
     toolBtns.forEach(b => b.classList.remove('active'));
+    annoHelpOverlay.hidden = true;
 
     // Brief "Saved" feedback
     annoSaveBtn.textContent = 'Saved!';
@@ -556,6 +578,7 @@
     annotationToolbar.hidden = true;
     annotateBtn.hidden = false;
     toolBtns.forEach(b => b.classList.remove('active'));
+    annoHelpOverlay.hidden = true;
   }
 
 })();

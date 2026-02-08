@@ -132,6 +132,7 @@
         </div>
 
         <div id="annotation-toolbar" class="annotation-toolbar" hidden>
+          <div class="toolbar-hint" id="toolbar-hint">Select a tool, then tap the image to place it</div>
           <div class="toolbar-tools">
             <button class="tool-btn" data-tool="arrow" title="Add Arrow">Arrow</button>
             <button class="tool-btn" data-tool="text" title="Add Text">Text</button>
@@ -149,6 +150,22 @@
             <button id="anno-clear-btn" class="btn-toolbar">Clear</button>
             <button id="anno-save-btn" class="btn-toolbar btn-toolbar-primary">Save</button>
             <button id="anno-cancel-btn" class="btn-toolbar">Cancel</button>
+          </div>
+        </div>
+
+        <!-- First-time annotation help overlay -->
+        <div id="anno-help-overlay" class="anno-help-overlay" hidden>
+          <div class="anno-help-card">
+            <h3>Annotate this junction</h3>
+            <p>Add visual notes to help remember what to do here.</p>
+            <ul class="anno-help-list">
+              <li><strong>Arrow</strong> &mdash; show which direction to go</li>
+              <li><strong>Text</strong> &mdash; add a label like "stay left"</li>
+              <li><strong>Highlight</strong> &mdash; circle something important</li>
+            </ul>
+            <p class="anno-help-tip">Pick a tool from the toolbar, then tap the image to place it. Drag to move, handles to resize or rotate.</p>
+            <p class="anno-help-tip">Hit <strong>Save</strong> when you're done &mdash; your annotations will appear every time you revisit this junction.</p>
+            <button id="anno-help-dismiss" class="btn-primary anno-help-dismiss">Got it</button>
           </div>
         </div>
 

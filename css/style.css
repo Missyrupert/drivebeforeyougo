@@ -772,6 +772,74 @@ body {
   color: var(--white);
 }
 
+/* Toolbar inline hint */
+.toolbar-hint {
+  width: 100%;
+  font-size: 0.7rem;
+  color: var(--text-light);
+  padding-bottom: 0.25rem;
+}
+
+/* First-time annotation help overlay */
+.anno-help-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.anno-help-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.25rem;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+}
+
+.anno-help-card h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+
+.anno-help-card p {
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  line-height: 1.45;
+}
+
+.anno-help-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.6rem 0;
+}
+
+.anno-help-list li {
+  font-size: 0.85rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.anno-help-list li:last-child {
+  border-bottom: none;
+}
+
+.anno-help-tip {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.anno-help-dismiss {
+  margin-top: 0.75rem;
+  padding: 0.6rem;
+  font-size: 0.9rem;
+}
+
 /* Utility */
 [hidden] {
   display: none !important;
