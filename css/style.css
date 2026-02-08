@@ -453,6 +453,52 @@ body {
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25));
 }
 
+.lane-indicator {
+  position: absolute;
+  pointer-events: none;
+  z-index: 7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lane-indicator-arrow {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+.lane-indicator-arrow.left {
+  border-width: 20px 30px 20px 0;
+  border-color: transparent #ff6b35 transparent transparent;
+}
+
+.lane-indicator-arrow.right {
+  border-width: 20px 0 20px 30px;
+  border-color: transparent transparent transparent #ff6b35;
+}
+
+.lane-indicator-arrow.straight {
+  border-width: 0 12px 30px 12px;
+  border-color: transparent transparent #ff6b35 transparent;
+}
+
+.lane-indicator-label {
+  background: #ff6b35;
+  color: #ffffff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 2px solid #ffffff;
+}
+
 .orientation-overlay {
   position: absolute;
   left: 50%;

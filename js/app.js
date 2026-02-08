@@ -33,6 +33,9 @@
   const streetviewContainer = document.getElementById('streetview-container');
   const orientationOverlay = document.getElementById('orientation-overlay');
   const fingerOverlay      = document.getElementById('finger-overlay');
+  const laneIndicator      = document.getElementById('lane-indicator');
+  const laneIndicatorArrow = laneIndicator ? laneIndicator.querySelector('.lane-indicator-arrow') : null;
+  const laneIndicatorLabel = laneIndicator ? laneIndicator.querySelector('.lane-indicator-label') : null;
   const junctionBadge      = document.getElementById('junction-badge');
   const junctionDescription = document.getElementById('junction-description');
   const junctionTypeTag    = document.getElementById('junction-type-tag');
@@ -380,10 +383,22 @@
         const rotation = getFingerRotation(state.point);
         fingerOverlay.style.setProperty('--finger-rotation', `${rotation}deg`);
       }
+      const laneInfo = getLaneIndicator(state.point);
+      if (laneInfo) {
+        laneIndicator.hidden = false;
+        laneIndicatorArrow.className = `lane-indicator-arrow ${laneInfo.direction}`;
+        laneIndicatorLabel.textContent = laneInfo.label;
+        laneIndicator.style.left = `${laneInfo.xPercent}%`;
+        laneIndicator.style.top = `${laneInfo.yPercent}%`;
+        laneIndicator.style.transform = 'translate(-50%, -50%)';
+      } else {
+        laneIndicator.hidden = true;
+      }
     } else {
       decisionLabel.hidden = true;
       orientationOverlay.hidden = true;
       fingerOverlay.hidden = true;
+      laneIndicator.hidden = true;
     }
 
     // Load annotations for current junction (read-only) unless editing
@@ -552,6 +567,50 @@
       return 45;
     }
     return 0;
+  }
+
+  function getLaneIndicator(point) {
+    if (!point || point.commitmentLevel !== 'high') return null;
+    if (!point.isDecisionPoint && !point.isLeadIn) return null;
+
+    const instruction = (point.instruction || '').toLowerCase();
+    const hasLaneCommitment = Array.isArray(point.reasons) && point.reasons.includes('lane-commitment');
+    const isRoundabout = point.type === 'roundabout';
+
+    if (!hasLaneCommitment && !isRoundabout) return null;
+
+    let direction = 'straight';
+    let label = '';
+
+    if (instruction.includes('left') || instruction.includes('keep left')) {
+      direction = 'left';
+      label = 'LEFT LANE';
+    } else if (instruction.includes('right') || instruction.includes('keep right')) {
+      direction = 'right';
+      label = 'RIGHT LANE';
+    } else if (isRoundabout) {
+      const exitMatch = instruction.match(/(\d+)(st|nd|rd|th)\s+exit/i);
+      if (exitMatch) {
+        direction = 'right';
+        label = `${exitMatch[1]}${exitMatch[2].toUpperCase()} EXIT`;
+      } else {
+        direction = 'straight';
+        label = 'ROUNDABOUT';
+      }
+    } else {
+      label = 'STAY IN LANE';
+    }
+
+    const containerRect = streetviewContainer.getBoundingClientRect();
+    const x = direction === 'left' ? containerRect.width * 0.25 : direction === 'right' ? containerRect.width * 0.75 : containerRect.width * 0.5;
+    const y = containerRect.height * 0.4;
+
+    return {
+      direction,
+      label,
+      x: x - 50,
+      y: y - 40,
+    };
   }
 
   // ---- Annotation Editor Integration ----
