@@ -32,6 +32,7 @@
   const rehearsalView      = document.getElementById('rehearsal-view');
   const streetviewContainer = document.getElementById('streetview-container');
   const orientationOverlay = document.getElementById('orientation-overlay');
+  const fingerOverlay      = document.getElementById('finger-overlay');
   const junctionBadge      = document.getElementById('junction-badge');
   const junctionDescription = document.getElementById('junction-description');
   const junctionTypeTag    = document.getElementById('junction-type-tag');
@@ -373,9 +374,16 @@
         state.point.commitmentLevel === 'high' &&
         (state.point.isLeadIn || state.point.isDecisionPoint);
       orientationOverlay.hidden = !showOrientation;
+      const showFinger = shouldShowFinger(state.point);
+      fingerOverlay.hidden = !showFinger;
+      if (showFinger) {
+        const rotation = getFingerRotation(state.point);
+        fingerOverlay.style.setProperty('--finger-rotation', `${rotation}deg`);
+      }
     } else {
       decisionLabel.hidden = true;
       orientationOverlay.hidden = true;
+      fingerOverlay.hidden = true;
     }
 
     // Load annotations for current junction (read-only) unless editing
@@ -525,6 +533,25 @@
   function truncateText(text, maxLen) {
     if (text.length <= maxLen) return text;
     return text.slice(0, maxLen - 1) + '…';
+  }
+
+  function shouldShowFinger(point) {
+    const hasLaneCommitment = Array.isArray(point.reasons) && point.reasons.includes('lane-commitment');
+    const isComplex = point.type === 'roundabout' || hasLaneCommitment;
+    const isTargetFrame = point.isLeadIn || point.isDecisionPoint;
+    return point.commitmentLevel === 'high' && isComplex && isTargetFrame;
+  }
+
+  function getFingerRotation(point) {
+    const instruction = (point.instruction || '').toLowerCase();
+    if (instruction.includes('u-turn') || instruction.includes('u turn')) return 180;
+    if (instruction.includes('left')) return -45;
+    if (instruction.includes('right')) return 45;
+    if (instruction.includes('straight') || instruction.includes('continue') || instruction.includes('ahead')) return 0;
+    if (point.type === 'roundabout' && /(\d+)(st|nd|rd|th)\s+exit/.test(instruction)) {
+      return 45;
+    }
+    return 0;
   }
 
   // ---- Annotation Editor Integration ----

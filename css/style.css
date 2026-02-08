@@ -436,6 +436,23 @@ body {
   position: relative;
 }
 
+.finger-overlay {
+  position: absolute;
+  left: 50%;
+  bottom: 4.5rem;
+  transform: translateX(-50%) rotate(var(--finger-rotation, 0deg));
+  transform-origin: 50% 85%;
+  pointer-events: none;
+  opacity: 0.55;
+  z-index: 6;
+}
+
+.finger-overlay img {
+  width: 140px;
+  height: auto;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25));
+}
+
 .orientation-overlay {
   position: absolute;
   left: 50%;
