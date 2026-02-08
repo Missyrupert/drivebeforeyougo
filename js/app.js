@@ -42,6 +42,16 @@
   const speedBtns          = document.querySelectorAll('.speed-btn');
   const progressBar        = document.getElementById('progress-bar');
 
+  // Annotation editor DOM refs
+  const annotateBtn        = document.getElementById('annotate-btn');
+  const annotationToolbar  = document.getElementById('annotation-toolbar');
+  const toolBtns           = document.querySelectorAll('.tool-btn');
+  const annoColour         = document.getElementById('anno-colour');
+  const annoSize           = document.getElementById('anno-size');
+  const annoClearBtn       = document.getElementById('anno-clear-btn');
+  const annoSaveBtn        = document.getElementById('anno-save-btn');
+  const annoCancelBtn      = document.getElementById('anno-cancel-btn');
+
   // ---- State ----
   const debugMode = new URLSearchParams(window.location.search).get('debug') === '1';
   const envKey = (window.__ENV__ && window.__ENV__.GOOGLE_MAPS_API_KEY) || '';
@@ -145,6 +155,36 @@
         speedBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
       });
+    });
+
+    // Annotation editor events
+    annotateBtn.addEventListener('click', onAnnotateClick);
+
+    toolBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        toolBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        AnnotationEditor.setTool(btn.dataset.tool);
+      });
+    });
+
+    annoColour.addEventListener('input', () => {
+      AnnotationEditor.setColour(annoColour.value);
+    });
+
+    annoSize.addEventListener('change', () => {
+      AnnotationEditor.setSize(annoSize.value);
+    });
+
+    annoClearBtn.addEventListener('click', () => {
+      AnnotationEditor.clear();
+    });
+
+    annoSaveBtn.addEventListener('click', onAnnotationSave);
+    annoCancelBtn.addEventListener('click', onAnnotationCancel);
+
+    window.addEventListener('resize', () => {
+      AnnotationEditor.resize();
     });
   }
 
@@ -299,6 +339,7 @@
     rehearsalView.hidden = false;
 
     RehearsalPlayer.init(streetviewContainer, decisionPoints, onPlayerUpdate);
+    AnnotationEditor.init('annotation-canvas', streetviewContainer);
 
     if (idx > 0) {
       RehearsalPlayer.goTo(idx);
@@ -321,6 +362,16 @@
     } else {
       decisionLabel.hidden = true;
       orientationOverlay.hidden = true;
+    }
+
+    // Load annotations for current junction (read-only) unless editing
+    if (!AnnotationEditor.isEditing()) {
+      const key = getJunctionKey(state.point);
+      if (key && AnnotationEditor.hasAnnotations(key)) {
+        AnnotationEditor.load(key);
+      } else {
+        AnnotationEditor.hide();
+      }
     }
 
     progressBar.style.width = state.progress + '%';
@@ -460,6 +511,51 @@
   function truncateText(text, maxLen) {
     if (text.length <= maxLen) return text;
     return text.slice(0, maxLen - 1) + '…';
+  }
+
+  // ---- Annotation Editor Integration ----
+
+  function getJunctionKey(pt) {
+    if (!pt) return null;
+    return pt.lat.toFixed(5) + ',' + pt.lng.toFixed(5) + ',' + Math.round(pt.heading);
+  }
+
+  function onAnnotateClick() {
+    const state = RehearsalPlayer.getState();
+    const pt = state.point;
+    if (!pt) return;
+
+    const key = getJunctionKey(pt);
+    if (!key) return;
+
+    // Pause playback while editing
+    if (state.isPlaying) RehearsalPlayer.togglePlay();
+
+    AnnotationEditor.init('annotation-canvas', streetviewContainer);
+    AnnotationEditor.enter(key);
+    annotationToolbar.hidden = false;
+    annotateBtn.hidden = true;
+
+    // Clear tool selection
+    toolBtns.forEach(b => b.classList.remove('active'));
+  }
+
+  function onAnnotationSave() {
+    AnnotationEditor.save();
+    annotationToolbar.hidden = true;
+    annotateBtn.hidden = false;
+    toolBtns.forEach(b => b.classList.remove('active'));
+
+    // Brief "Saved" feedback
+    annoSaveBtn.textContent = 'Saved!';
+    setTimeout(() => { annoSaveBtn.textContent = 'Save'; }, 1500);
+  }
+
+  function onAnnotationCancel() {
+    AnnotationEditor.exit();
+    annotationToolbar.hidden = true;
+    annotateBtn.hidden = false;
+    toolBtns.forEach(b => b.classList.remove('active'));
   }
 
 })();

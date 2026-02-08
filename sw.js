@@ -1,4 +1,4 @@
-const CACHE_NAME = 'drivebeforeyougo-shell-v1';
+const CACHE_NAME = 'drivebeforeyougo-shell-v2';
 const SHELL_ASSETS = [
   '/',
   '/index.html',
@@ -6,6 +6,7 @@ const SHELL_ASSETS = [
   '/js/app.js',
   '/js/route-analyzer.js',
   '/js/rehearsal-player.js',
+  '/js/annotation-editor.js',
   '/manifest.json',
   '/icons/icon-192.png',
   '/icons/icon-512.png',

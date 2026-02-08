@@ -123,10 +123,33 @@
 
       <!-- Street View player -->
       <div id="rehearsal-view" hidden>
-        <div id="streetview-container"></div>
+        <div id="streetview-container">
+          <canvas id="annotation-canvas"></canvas>
+        </div>
         <div id="orientation-overlay" class="orientation-overlay" hidden>
           <div class="orientation-car"></div>
           <div class="orientation-arrow"></div>
+        </div>
+
+        <div id="annotation-toolbar" class="annotation-toolbar" hidden>
+          <div class="toolbar-tools">
+            <button class="tool-btn" data-tool="arrow" title="Add Arrow">Arrow</button>
+            <button class="tool-btn" data-tool="text" title="Add Text">Text</button>
+            <button class="tool-btn" data-tool="highlight" title="Add Highlight">Highlight</button>
+          </div>
+          <div class="toolbar-options">
+            <label>Colour: <input type="color" id="anno-colour" value="#ff3333"></label>
+            <label>Size: <select id="anno-size">
+              <option value="small">S</option>
+              <option value="medium" selected>M</option>
+              <option value="large">L</option>
+            </select></label>
+          </div>
+          <div class="toolbar-actions">
+            <button id="anno-clear-btn" class="btn-toolbar">Clear</button>
+            <button id="anno-save-btn" class="btn-toolbar btn-toolbar-primary">Save</button>
+            <button id="anno-cancel-btn" class="btn-toolbar">Cancel</button>
+          </div>
         </div>
 
         <div class="junction-info-overlay">
@@ -134,6 +157,7 @@
           <p id="junction-description"></p>
           <span class="junction-type-tag" id="junction-type-tag"></span>
           <span class="decision-label" id="decision-label" hidden>Decision point</span>
+          <button id="annotate-btn" class="btn-annotate" title="Annotate this junction">Annotate</button>
         </div>
 
         <div class="player-controls">
@@ -158,8 +182,10 @@
 
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
   <script src="/js/route-analyzer.js"></script>
   <script src="/js/rehearsal-player.js"></script>
+  <script src="/js/annotation-editor.js"></script>
   <script src="/js/app.js"></script>
   <!-- Google Maps loaded by app.js with user's API key -->
 </body>
